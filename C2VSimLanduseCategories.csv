@@ -1,0 +1,27 @@
+CropID,CropClass,CatName,CropCode
+1,GR,Grains,1
+2,RI,Rice,2
+3,CO,Cotton,3
+4,SB,Sugar Beets,4
+5,CN,Corn,5
+6,DB,Dry Beans,6
+7,SA,Safflower,7
+8,FL,Field Crops,8
+9,AL,Alfalfa,9
+10,PA,Pasture,10
+11,TP,Tomatoes Processing,11
+12,TF,Tomatoes Fresh,12
+13,CU,Curcubits,13
+14,OG,Onions & Garlic,14
+15,PO,Potatoes,15
+16,TR,Truck Crops,16
+17,AP,Almonds & Pistachios,17
+18,OR,Orchards,18
+19,CS,Citrus & Subtropical,19
+20,VI,Vineyards,20
+21,ID,Idle,21
+22,RF,Refuges,22
+23,OW,Open Water,23
+24,UR,Urban,24
+25,NV,Native,25
+26,RV,Riparian,26

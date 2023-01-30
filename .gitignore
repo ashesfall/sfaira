@@ -1,0 +1,5 @@
+.idea/**
+*.tif
+*.TIFF
+*.jpg
+*.jpeg
