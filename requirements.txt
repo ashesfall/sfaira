@@ -1,6 +1,8 @@
+libtiff
 transformers
 torch
 torchvision
 datasets
-libtiff
+evaluate
+scikit-learn
 scikit-image
