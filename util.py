@@ -48,9 +48,13 @@ def create_dataset(labelData, imageData, size, threshold, validationRatio=0):
             tileData = extract_tile(labelData, x, y, size)
             l = label(tileData, threshold)
 
+            validation = False
+            if validationRatio > 0:
+                validation = count % validationRatio == 0;
+
             if l > 0:
                 tileImage = extract_tile(imageData, x, y, size)
-                if (validationRatio > 0) & (count % validationRatio == 0):
+                if validation:
                     io.imsave(f"validation/{count}.jpeg", tileImage)
                 else:
                     io.imsave(f"train/{count}.jpeg", tileImage)
