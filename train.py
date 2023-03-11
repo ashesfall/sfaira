@@ -30,7 +30,7 @@ def main():
     print(f"Label Shape: {labelData.shape}")
     print(f"Image Shape: {imageData.shape}")
 
-    labels = util.load_labels("C2VSimLanduseCategories.csv")
+    labels, numbers = util.load_labels("C2VSimLanduseCategories.csv")
     print(f"Labels: {labels}")
     dataset = util.create_dataset(labelData, imageData, 100, 0.5)
     dataset = dataset.train_test_split(test_size=0.2)

@@ -37,6 +37,24 @@ def load_model(model_name, labels):
 
     return model
 
+def prepare_input(imageData, size, transforms):
+    count = 0
+
+    tiles = []
+
+    for x in range(0, imageData.shape[0], size):
+        for y in range(0, imageData.shape[1], size):
+            tileImage = extract_tile(imageData, x, y, size)
+            io.imsave(f"eval/{count}.jpeg", tileImage)
+            value = {
+                "image": [Image.open(f"eval/{count}.jpeg")]
+            }
+            transforms(value)
+            tiles.append(value["pixel_values"][0])
+            count = count + 1
+
+    return tiles
+
 def create_dataset(labelData, imageData, size, threshold, validationRatio=0):
     threshold = size * size * threshold
     count = 0
@@ -69,6 +87,7 @@ def create_dataset(labelData, imageData, size, threshold, validationRatio=0):
     return dataset
 
 def load_labels(file):
+    numbers = []
     labels = []
 
     with open(file, newline='') as csvfile:
@@ -78,9 +97,10 @@ def load_labels(file):
             if first:
                 first = False
                 continue
+            numbers.append(int(row[0]))
             labels.append(row[1])
 
-    return labels
+    return labels, numbers
 
 def label(tileData, threshold):
     dist = label_distribution(tileData)
