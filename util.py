@@ -37,13 +37,13 @@ def load_model(model_name, labels):
 
     return model
 
-def prepare_input(imageData, size, transforms):
+def prepare_input(imageData, granularity, size, transforms):
     count = 0
 
     tiles = []
 
-    for x in range(0, imageData.shape[0], size):
-        for y in range(0, imageData.shape[1], size):
+    for x in range(0, imageData.shape[0], granularity):
+        for y in range(0, imageData.shape[1], granularity):
             tileImage = extract_tile(imageData, x, y, size)
             io.imsave(f"eval/{count}.jpeg", tileImage)
             value = {

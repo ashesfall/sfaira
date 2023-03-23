@@ -1,5 +1,6 @@
 import os
 import csv
+import torch
 from skimage import io
 from PIL import Image
 
@@ -69,6 +70,7 @@ def main():
     labels, numbers = util.load_labels("C2VSimLanduseCategories.csv")
     print(f"Labels: {labels}")
 
+    torch.set_grad_enabled(False)
     model = util.load_model(model_name, labels)
     model.eval()
     print(f"Loaded Model: {model_name}")
@@ -79,13 +81,49 @@ def main():
     imageData = io.imread("LC08_L1TP_044033_20180719_20200831_02_T1_B6_clip.TIF")
     print(f"Image Shape: {imageData.shape}")
 
-    prediction = np.ndarray(shape=(imageData.shape[0], imageData.shape[1], len(labels)), dtype=np.float32)
-    count = np.ndarray(shape=(imageData.shape[0], imageData.shape[1]), dtype=np.float32)
+    prediction = [[np.ndarray(shape=(len(labels)), dtype=np.float32) for j in range(imageData.shape[1])] for i in range(imageData.shape[0])]
+    print(len(prediction))
+    print(len(prediction[0]))
 
+    granularity = 100
     size = 100
 
-    input = np.array(util.prepare_input(imageData, 100, transforms))
-    print(input.shape)
-    print(f"Model.forward: {model.forward(pixel_values=input, labels=labels)}")
+    total_rows = int(imageData.shape[0] / granularity) + 1
+    print(f"Total Rows: {total_rows}")
+
+    # Enumerate the entire image using a sliding window of 'size'
+    # and stride of 'granularity;
+    for x in range(0, imageData.shape[0], granularity):
+        print(f"Predicting Row: {x / granularity} of {total_rows}")
+
+        for y in range(0, imageData.shape[1], granularity):
+            tileImage = util.extract_tile(imageData, x, y, size)
+            io.imsave(f"eval/temp.jpeg", tileImage)
+            value = {
+                "image": [Image.open(f"eval/temp.jpeg")]
+            }
+            transforms(value)
+
+            img_shape = value["pixel_values"][0].shape
+            pixels = value["pixel_values"][0].reshape(1, img_shape[0], img_shape[1], img_shape[2])
+
+            out = model.forward(pixel_values=pixels)
+
+            # Apply this prediction to the entire window
+            for i in range(x, x + granularity):
+                for j in range(y, y + granularity):
+                    if i < imageData.shape[0] and j < imageData.shape[1]:
+                        prediction[i][j] = prediction[i][j] + out.logits[0].numpy()
+
+    # Consolidate the predictions using argmax
+    result = [[0 for j in range(imageData.shape[1])] for i in range(imageData.shape[0])]
+
+    for x in range(0, imageData.shape[0]):
+        print(f"Consolidating Row: {x} of {imageData.shape[0]}")
+
+        for y in range(0, imageData.shape[1]):
+            result[x][y] = numbers[np.argmax(prediction[x][y])]
+
+    io.imsave("eval/result.tif", result)
 
 main()
