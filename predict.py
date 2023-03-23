@@ -122,9 +122,9 @@ def main():
         print(f"Consolidating Row: {x} of {imageData.shape[0]}")
 
         for y in range(0, imageData.shape[1]):
-            result[x][y] = np.array(numbers[np.argmax(prediction[x][y])],
-                                    numbers[np.argmax(prediction[x][y])],
-                                    numbers[np.argmax(prediction[x][y])],
+            result[x][y] = np.array([numbers[np.argmax(prediction[x][y])],
+                                     numbers[np.argmax(prediction[x][y])],
+                                     numbers[np.argmax(prediction[x][y])]],
                                     dtype=np.uint8)
 
     io.imsave("eval/result.jpeg", np.array(result))
