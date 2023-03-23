@@ -124,6 +124,6 @@ def main():
         for y in range(0, imageData.shape[1]):
             result[x][y] = numbers[np.argmax(prediction[x][y])]
 
-    io.imsave("eval/result.tif", result)
+    io.imsave("eval/result.tif", np.array(result))
 
 main()
