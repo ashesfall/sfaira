@@ -60,6 +60,7 @@ def create_dataset(labelData, imageData, size, threshold, validationRatio=0):
     count = 0
 
     tiles = []
+    all_labels = []
 
     for x in range(0, labelData.shape[0], size):
         for y in range(0, labelData.shape[1], size):
@@ -71,6 +72,7 @@ def create_dataset(labelData, imageData, size, threshold, validationRatio=0):
                 validation = count % validationRatio == 0;
 
             if l > 0:
+                all_labels.append(l)
                 tileImage = extract_tile(imageData, x, y, size)
                 if validation:
                     io.imsave(f"validation/{count}.jpeg", tileImage)
@@ -82,6 +84,7 @@ def create_dataset(labelData, imageData, size, threshold, validationRatio=0):
                     })
                 count = count + 1
 
+    print(f"Label Distribution {label_distribution(all_labels)}")
     print(f"Total tiles: {count}")
     dataset = Dataset.from_list(tiles)
     return dataset

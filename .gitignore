@@ -4,6 +4,7 @@
 *.TIFF
 *.jpg
 *.jpeg
+*.log
 tiles/**
 train/**
 validation/**

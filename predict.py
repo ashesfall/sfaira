@@ -82,8 +82,6 @@ def main():
     print(f"Image Shape: {imageData.shape}")
 
     prediction = [[np.ndarray(shape=(len(labels)), dtype=np.float32) for j in range(imageData.shape[1])] for i in range(imageData.shape[0])]
-    print(len(prediction))
-    print(len(prediction[0]))
 
     granularity = 100
     size = 100
@@ -98,16 +96,16 @@ def main():
 
         for y in range(0, imageData.shape[1], granularity):
             tileImage = util.extract_tile(imageData, x, y, size)
-            io.imsave(f"eval/temp.jpeg", tileImage)
-            value = {
-                "image": [Image.open(f"eval/temp.jpeg")]
-            }
+            value = {"image": [Image.fromarray(tileImage)]}
             transforms(value)
 
             img_shape = value["pixel_values"][0].shape
             pixels = value["pixel_values"][0].reshape(1, img_shape[0], img_shape[1], img_shape[2])
 
             out = model.forward(pixel_values=pixels)
+
+            print(f"Logits for tile at ({x}, {y}): {out.logits[0].numpy()}")
+            print(f"Predicted label for tile at ({x}, {y}): {labels[np.argmax(out.logits[0].numpy())]}")
 
             # Apply this prediction to the entire window
             for i in range(x, x + granularity):
